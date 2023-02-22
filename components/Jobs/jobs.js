@@ -8,6 +8,8 @@ import {
   ScrollView,
   Modal,
   StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SelectDropdown from "react-native-select-dropdown";
@@ -29,6 +31,10 @@ function Jobs({ navigation }) {
   const openContactModal = (jobContact) => {
     setContact(jobContact);
     setIsOpen(true);
+  };
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
   };
 
   const closeModal = () => {
@@ -102,109 +108,111 @@ function Jobs({ navigation }) {
   }
 
   return (
-    <ImageBackground style={styles.container}>
-      <View style={styles.filterContainer}>
-        <View style={styles.filterSearch}>
-          <Text style={styles.icon}>🩺</Text>
-          <TextInput
-            style={{ height: 40, width: 200, paddingLeft: 10 }}
-            placeholder="Job Title"
-            onChangeText={(text) => {
-              setFilterTitle(text.toLowerCase());
-            }}
-          />
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <ImageBackground style={styles.container}>
+        <View style={styles.filterContainer}>
+          <View style={styles.filterSearch}>
+            <Text style={styles.icon}>🩺</Text>
+            <TextInput
+              style={{ height: 40, width: 200, paddingLeft: 10 }}
+              placeholder="Job Title"
+              onChangeText={(text) => {
+                setFilterTitle(text.toLowerCase());
+              }}
+            />
+          </View>
+          <View style={styles.filterSearch}>
+            <Text style={styles.icon}>📍</Text>
+            <TextInput
+              style={{ height: 40, width: 200, paddingLeft: 10 }}
+              placeholder="Location"
+              onChangeText={(text) => {
+                setFilterLocation(text.toLowerCase());
+              }}
+            />
+          </View>
+          <View style={styles.filterSearch}>
+            <SelectDropdown
+              data={job}
+              onSelect={(selectedItem, index) => {
+                setFilterJobType(selectedItem);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                // text represented after item is selected
+                // if data array is an array of objects then return selectedItem.property to render after item is selected
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                // text represented for each item in dropdown
+                // if data array is an array of objects then return item.property to represent item in dropdown
+                return item;
+              }}
+            />
+          </View>
+          <TouchableOpacity style={styles.submitButton} onPress={filterJobs}>
+            <Text style={styles.submitButtonText}>Filter</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.filterSearch}>
-          <Text style={styles.icon}>📍</Text>
-          <TextInput
-            style={{ height: 40, width: 200, paddingLeft: 10 }}
-            placeholder="Location"
-            onChangeText={(text) => {
-              setFilterLocation(text.toLowerCase());
-            }}
-          />
-        </View>
-        <View style={styles.filterSearch}>
-          <SelectDropdown
-            data={job}
-            onSelect={(selectedItem, index) => {
-              setFilterJobType(selectedItem);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              // text represented after item is selected
-              // if data array is an array of objects then return selectedItem.property to render after item is selected
-              return selectedItem;
-            }}
-            rowTextForSelection={(item, index) => {
-              // text represented for each item in dropdown
-              // if data array is an array of objects then return item.property to represent item in dropdown
-              return item;
-            }}
-          />
-        </View>
-        <TouchableOpacity style={styles.submitButton} onPress={filterJobs}>
-          <Text style={styles.submitButtonText}>Filter</Text>
-        </TouchableOpacity>
-      </View>
 
-      <ScrollView
-        contentContainerStyle={{
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "row",
-          flexWrap: "wrap",
-        }}
-      >
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => (
-            <View
-              style={styles.inputContainer}
-              className="jobs-available"
-              key={job.id}
-            >
-              <View className="job-card" style={styles.jobs} id={job.id}>
-                <Text style={styles.title}>{job.title}</Text>
-                <Text style={styles.details}>{job.company}</Text>
-                <Text style={styles.details}>{job.location}</Text>
-                <Text style={styles.details}>
-                  {job.job_type} {job.job_salary}
-                </Text>
-                {job.apply_link && (
-                  <TouchableOpacity
-                    accessibilityRole="link"
-                    className="apply-link"
-                    style={styles.details}
-                  >
-                    <Text id="forgot-password">Apply Now</Text>
-                  </TouchableOpacity>
-                )}
-                {(job.contact[0].phone || job.contact[0].email) && (
-                  <TouchableOpacity
-                    style={styles.contact}
-                    className="contact-button"
-                    onPress={() => openContactModal(job.contact[0])}
-                  >
-                    <Text id="forgot-password">Contact</Text>
-                  </TouchableOpacity>
-                )}
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+          }}
+        >
+          {filteredJobs.length > 0 ? (
+            filteredJobs.map((job) => (
+              <View
+                style={styles.inputContainer}
+                className="jobs-available"
+                key={job.id}
+              >
+                <View className="job-card" style={styles.jobs} id={job.id}>
+                  <Text style={styles.title}>{job.title}</Text>
+                  <Text style={styles.details}>{job.company}</Text>
+                  <Text style={styles.details}>{job.location}</Text>
+                  <Text style={styles.details}>
+                    {job.job_type} {job.job_salary}
+                  </Text>
+                  {job.apply_link && (
+                    <TouchableOpacity
+                      accessibilityRole="link"
+                      className="apply-link"
+                      style={styles.details}
+                    >
+                      <Text id="forgot-password">Apply Now</Text>
+                    </TouchableOpacity>
+                  )}
+                  {(job.contact[0].phone || job.contact[0].email) && (
+                    <TouchableOpacity
+                      style={styles.contact}
+                      className="contact-button"
+                      onPress={() => openContactModal(job.contact[0])}
+                    >
+                      <Text id="forgot-password">Contact</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            ))
+          ) : (
+            <View>
+              <Text id="forgot-password">No jobs found</Text>
+            </View>
+          )}
+          {contact && (
+            <View>
+              <View>
+                <ContactModal contact={contact} />
               </View>
             </View>
-          ))
-        ) : (
-          <View>
-            <Text id="forgot-password">No jobs found</Text>
-          </View>
-        )}
-        {contact && (
-          <View>
-            <View>
-              <ContactModal contact={contact} />
-            </View>
-          </View>
-        )}
-      </ScrollView>
-      <MainContainer navigation={navigation} />
-    </ImageBackground>
+          )}
+        </ScrollView>
+        <MainContainer navigation={navigation} />
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 }
 

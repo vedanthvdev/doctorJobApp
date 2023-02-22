@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "doctorApp",
-    "slug": "doctorApp",
+    "name": "Hospital Jobs",
+    "slug": "Hospital-Jobs",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/hosIcon2.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/hospitalJob.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,16 +18,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chintuvedanth.HospitalJobs"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.chintuvedanth.HospitalJobs"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bd14d898-f3de-4e8f-b4f3-0cf67ef6e64e"
+      }
     }
   }
 }

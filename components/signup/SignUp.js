@@ -5,6 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  TouchableWithoutFeedback,
+  Keyboard,
   StyleSheet,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -23,6 +25,10 @@ function SignUp({ navigation }) {
   const [userPresent, setUserPresent] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   function yearsAgo(years) {
     const date = new Date();
@@ -106,48 +112,49 @@ function SignUp({ navigation }) {
   }
 
   return (
-    <ImageBackground style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.formContainerText}>Sign Up</Text>
-        <View style={styles.inputContainer}>
-          <Ionicons
-            name="chevron-forward-circle-outline"
-            size={24}
-            color="grey"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="First Name*"
-            value={regFirstName}
-            onChangeText={(value) => setRegFirstName(value)}
-            required
-          />
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <ImageBackground style={styles.container}>
+        <View style={styles.formContainer}>
+          <Text style={styles.formContainerText}>Sign Up</Text>
+          <View style={styles.inputContainer}>
+            <Ionicons
+              name="chevron-forward-circle-outline"
+              size={24}
+              color="grey"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="First Name*"
+              value={regFirstName}
+              onChangeText={(value) => setRegFirstName(value)}
+              required
+            />
 
-          <Ionicons
-            name="chevron-forward-circle-outline"
-            size={24}
-            color="grey"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Last Name*"
-            value={regLastName}
-            onChangeText={(value) => setRegLastName(value)}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          {/* <Ionicons name="mail-outline" size={24} color="grey" /> */}
-          <Text style={styles.icon}>📧</Text>
+            <Ionicons
+              name="chevron-forward-circle-outline"
+              size={24}
+              color="grey"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Last Name*"
+              value={regLastName}
+              onChangeText={(value) => setRegLastName(value)}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            {/* <Ionicons name="mail-outline" size={24} color="grey" /> */}
+            <Text style={styles.icon}>📧</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Email*"
-            value={regEmail}
-            onChangeText={(value) => setRegEmail(value)}
-          />
-        </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Email*"
+              value={regEmail}
+              onChangeText={(value) => setRegEmail(value)}
+            />
+          </View>
 
-        {/* <View style={styles.dobContainer}>
+          {/* <View style={styles.dobContainer}>
           <Ionicons name="calendar-outline" size={24} color="grey" />
           <DateTimePicker
             mode="date"
@@ -161,106 +168,107 @@ function SignUp({ navigation }) {
           <Text style={styles.dobText}>{regDob}</Text>
         </View> */}
 
-        <View>
-          <RadioButton.Group
-            onValueChange={(value) => setRegGender(value)}
-            value={regGender}
+          <View>
+            <RadioButton.Group
+              onValueChange={(value) => setRegGender(value)}
+              value={regGender}
+            >
+              <View style={styles.radioButtonContainer}>
+                <TouchableOpacity
+                  style={styles.radioButtonOption}
+                  onPress={() => setRegGender("Male")}
+                >
+                  {/* <Ionicons name="man-outline" size={24} color="grey" /> */}
+                  <Text style={styles.gender}>👨‍🦱</Text>
+
+                  <Text style={styles.gender}>Male*</Text>
+                  <View style={styles.radio}>
+                    <RadioButton value="Male" style={styles.radio} />
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.radioButtonOption}
+                  onPress={() => setRegGender("Female")}
+                >
+                  {/* <Ionicons name="woman-outline" size={24} color="grey" /> */}
+                  <Text style={styles.gender}>👩‍🦰</Text>
+
+                  <Text style={styles.gender}>Female*</Text>
+                  <View style={styles.radio}>
+                    <RadioButton value="Female" style={styles.radio} />
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.radioButtonOption}
+                  onPress={() => setRegGender("Other")}
+                >
+                  <Ionicons name="people-outline" size={24} color="grey" />
+
+                  <Text style={styles.gender}>Other*</Text>
+                  <View style={styles.radio}>
+                    <RadioButton value="Other" />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </RadioButton.Group>
+          </View>
+
+          <View style={styles.inputContainer}>
+            {/* <Ionicons name="key-outline" size={24} color="grey" /> */}
+            <Text style={styles.icon}>🔑</Text>
+
+            <TextInput
+              type="password"
+              secureTextEntry={true}
+              style={styles.input}
+              placeholder="Password*"
+              value={regPassword}
+              onChangeText={(value) => setPassword(value)}
+              required
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            {/* <Ionicons name="key-outline" size={24} color="grey" /> */}
+            <Text style={styles.icon}>🔑</Text>
+
+            <TextInput
+              type="password"
+              secureTextEntry={true}
+              style={styles.input}
+              placeholder="Confirm Password*"
+              value={regConfirmPassword}
+              onChangeText={(value) => setConfirmPassword(value)}
+              required
+            />
+          </View>
+
+          {error && <Text style={styles.errorValue}>{error}</Text>}
+          {success && <Text style={styles.successValue}>{success}</Text>}
+
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              checkUserAlreadyRegistered();
+            }}
+            // disabled={!allowSubmit}
           >
-            <View style={styles.radioButtonContainer}>
-              <TouchableOpacity
-                style={styles.radioButtonOption}
-                onPress={() => setRegGender("Male")}
-              >
-                {/* <Ionicons name="man-outline" size={24} color="grey" /> */}
-                <Text style={styles.gender}>👨‍🦱</Text>
-
-                <Text style={styles.gender}>Male*</Text>
-                <View style={styles.radio}>
-                  <RadioButton value="Male" style={styles.radio} />
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.radioButtonOption}
-                onPress={() => setRegGender("Female")}
-              >
-                {/* <Ionicons name="woman-outline" size={24} color="grey" /> */}
-                <Text style={styles.gender}>👩‍🦰</Text>
-
-                <Text style={styles.gender}>Female*</Text>
-                <View style={styles.radio}>
-                  <RadioButton value="Female" style={styles.radio} />
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.radioButtonOption}
-                onPress={() => setRegGender("Other")}
-              >
-                <Ionicons name="people-outline" size={24} color="grey" />
-
-                <Text style={styles.gender}>Other*</Text>
-                <View style={styles.radio}>
-                  <RadioButton value="Other" />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </RadioButton.Group>
+            <Text style={styles.submitButtonText}>Submit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("LoginPage");
+            }}
+            accessibilityRole="link"
+            id="forgot-password-container"
+            style={styles.forgotPassword}
+          >
+            <Text id="forgot-password">Back to Login</Text>
+          </TouchableOpacity>
         </View>
-
-        <View style={styles.inputContainer}>
-          {/* <Ionicons name="key-outline" size={24} color="grey" /> */}
-          <Text style={styles.icon}>🔑</Text>
-
-          <TextInput
-            type="password"
-            secureTextEntry={true}
-            style={styles.input}
-            placeholder="Password*"
-            value={regPassword}
-            onChangeText={(value) => setPassword(value)}
-            required
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          {/* <Ionicons name="key-outline" size={24} color="grey" /> */}
-          <Text style={styles.icon}>🔑</Text>
-
-          <TextInput
-            type="password"
-            secureTextEntry={true}
-            style={styles.input}
-            placeholder="Confirm Password*"
-            value={regConfirmPassword}
-            onChangeText={(value) => setConfirmPassword(value)}
-            required
-          />
-        </View>
-
-        {error && <Text style={styles.errorValue}>{error}</Text>}
-        {success && <Text style={styles.successValue}>{success}</Text>}
-
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => {
-            checkUserAlreadyRegistered();
-          }}
-          // disabled={!allowSubmit}
-        >
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("LoginPage");
-          }}
-          accessibilityRole="link"
-          id="forgot-password-container"
-          style={styles.forgotPassword}
-        >
-          <Text id="forgot-password">Back to Login</Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 }
 

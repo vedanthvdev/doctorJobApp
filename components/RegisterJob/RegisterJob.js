@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { ipAddress } from "../../address";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,6 +26,10 @@ function RegisterJob({ navigation }) {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const job = ["Full-time", "Part-time", "Locum"];
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   async function register() {
     const date = new Date();
@@ -73,117 +79,119 @@ function RegisterJob({ navigation }) {
   }
 
   return (
-    <ImageBackground style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.formContainerText}>Add Job</Text>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <ImageBackground style={styles.container}>
+        <View style={styles.formContainer}>
+          <Text style={styles.formContainerText}>Add Job</Text>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.icon}>🩺</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Job Title*"
-            value={jobTitle}
-            onChangeText={setJobTitle}
-            required
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.icon}>🩺</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Job Title*"
+              value={jobTitle}
+              onChangeText={setJobTitle}
+              required
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.icon}>🏢</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Company*"
-            value={jobCompany}
-            onChangeText={setJobCompany}
-            required
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.icon}>🏢</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Company*"
+              value={jobCompany}
+              onChangeText={setJobCompany}
+              required
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.icon}>📍</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Location*"
-            value={jobLocation}
-            onChangeText={setJobLocation}
-            required
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.icon}>📍</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Location*"
+              value={jobLocation}
+              onChangeText={setJobLocation}
+              required
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.icon}>🔗</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Link to apply"
-            value={jobLink}
-            onChangeText={setJobLink}
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.icon}>🔗</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Link to apply"
+              value={jobLink}
+              onChangeText={setJobLink}
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.icon}>💰</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Salary*"
-            value={jobSalary}
-            onChangeText={setJobSalary}
-            keyboardType="numeric"
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.icon}>📧</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Contact Email"
-            value={email}
-            onChangeText={setEmail}
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.icon}>💰</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Salary*"
+              value={jobSalary}
+              onChangeText={setJobSalary}
+              keyboardType="numeric"
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.icon}>📧</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Contact Email"
+              value={email}
+              onChangeText={setEmail}
+            />
 
-          <Text style={styles.icon}>📞</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Contact Phone"
-            value={phoneNumber}
-            keyboardType="numeric"
-            onChangeText={setPhoneNumber}
-          />
-        </View>
+            <Text style={styles.icon}>📞</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Contact Phone"
+              value={phoneNumber}
+              keyboardType="numeric"
+              onChangeText={setPhoneNumber}
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <SelectDropdown
-            data={job}
-            onSelect={(selectedItem, index) => {
-              setJobType(selectedItem);
+          <View style={styles.inputContainer}>
+            <SelectDropdown
+              data={job}
+              onSelect={(selectedItem, index) => {
+                setJobType(selectedItem);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                // text represented after item is selected
+                // if data array is an array of objects then return selectedItem.property to render after item is selected
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                // text represented for each item in dropdown
+                // if data array is an array of objects then return item.property to represent item in dropdown
+                return item;
+              }}
+            />
+          </View>
+
+          {error && <Text style={styles.errorValue}>{error}</Text>}
+
+          {success && <Text style={styles.successValue}>{success}</Text>}
+
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              register();
             }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              // text represented after item is selected
-              // if data array is an array of objects then return selectedItem.property to render after item is selected
-              return selectedItem;
-            }}
-            rowTextForSelection={(item, index) => {
-              // text represented for each item in dropdown
-              // if data array is an array of objects then return item.property to represent item in dropdown
-              return item;
-            }}
-          />
+          >
+            <Text style={styles.submitButtonText}>Submit</Text>
+          </TouchableOpacity>
         </View>
 
-        {error && <Text style={styles.errorValue}>{error}</Text>}
-
-        {success && <Text style={styles.successValue}>{success}</Text>}
-
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => {
-            register();
-          }}
-        >
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-
-      <MainContainer navigation={navigation} />
-    </ImageBackground>
+        <MainContainer navigation={navigation} />
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 }
 
