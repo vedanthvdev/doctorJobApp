@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Switch,
   ImageBackground,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ipAddress } from "../../address";
@@ -22,6 +24,10 @@ const Login = ({ navigation }) => {
     setDetails({ ...details, [key]: value });
   };
   const [theme, setTheme] = useState(null);
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   React.useEffect(() => {
     setDetails({ email: "", password: "" });
@@ -82,84 +88,86 @@ const Login = ({ navigation }) => {
   }
 
   return (
-    <ImageBackground
-      source={require("../../assets/background.jpeg")}
-      style={styles.container}
-    >
-      <View style={styles.toggle}>
-        <Text style={styles.toggleButtonText}>{`${theme}`}</Text>
-        <Switch
-          value={theme}
-          onValueChange={toggleTheme}
-          style={styles.toggleButton}
-        />
-      </View>
-
-      <TouchableOpacity
-        onPress={() => {
-          navigation.push("SignUp");
-        }}
-        accessibilityRole="link"
-        id="signup-link"
-        style={styles.signUpButton}
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <ImageBackground
+        source={require("../../assets/background.jpeg")}
+        style={styles.container}
       >
-        <Text style={styles.signUpButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-
-      <View style={styles.formContainer}>
-        <Text style={styles.formContainerText}> Doctors Job</Text>
-        <View style={styles.inputContainer}>
-          {/* <Ionicons name="mail-outline" size={24} color="grey" /> */}
-          <Text style={styles.icon}>📧</Text>
-
-          <TextInput
-            style={styles.input}
-            id="email"
-            required
-            value={details.email}
-            onChangeText={(text) => handleChange("email", text)}
-            placeholder="Email*"
-            testID="email"
+        <View style={styles.toggle}>
+          <Text style={styles.toggleButtonText}>{`${theme}`}</Text>
+          <Switch
+            value={theme}
+            onValueChange={toggleTheme}
+            style={styles.toggleButton}
           />
         </View>
-        <View style={styles.inputContainer}>
-          {/* <Ionicons name="key-outline" size={24} color="grey" /> */}
-          <Text style={styles.icon}>🔑</Text>
-
-          <TextInput
-            style={styles.input}
-            id="password"
-            required
-            value={details.password}
-            onChangeText={(text) => handleChange("password", text)}
-            placeholder="Password*"
-            testID="password"
-            secureTextEntry={true}
-          />
-        </View>
-        {error !== "" ? <Text style={styles.errorValue}>{error}</Text> : null}
-
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => {
-            submitHandler();
-          }}
-        >
-          <Text style={styles.submitButtonText}>Log In</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("ForgotPassword");
+            navigation.push("SignUp");
           }}
           accessibilityRole="link"
-          id="forgot-password-container"
-          style={styles.forgotPassword}
+          id="signup-link"
+          style={styles.signUpButton}
         >
-          <Text id="forgot-password">Forgotten Password</Text>
+          <Text style={styles.signUpButtonText}>Sign Up</Text>
         </TouchableOpacity>
-      </View>
-    </ImageBackground>
+
+        <View style={styles.formContainer}>
+          <Text style={styles.formContainerText}> Hospital Jobs</Text>
+          <View style={styles.inputContainer}>
+            {/* <Ionicons name="mail-outline" size={24} color="grey" /> */}
+            <Text style={styles.icon}>📧</Text>
+
+            <TextInput
+              style={styles.input}
+              id="email"
+              required
+              value={details.email}
+              onChangeText={(text) => handleChange("email", text)}
+              placeholder="Email*"
+              testID="email"
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            {/* <Ionicons name="key-outline" size={24} color="grey" /> */}
+            <Text style={styles.icon}>🔑</Text>
+
+            <TextInput
+              style={styles.input}
+              id="password"
+              required
+              value={details.password}
+              onChangeText={(text) => handleChange("password", text)}
+              placeholder="Password*"
+              testID="password"
+              secureTextEntry={true}
+            />
+          </View>
+          {error !== "" ? <Text style={styles.errorValue}>{error}</Text> : null}
+
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => {
+              submitHandler();
+            }}
+          >
+            <Text style={styles.submitButtonText}>Log In</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("ForgotPassword");
+            }}
+            accessibilityRole="link"
+            id="forgot-password-container"
+            style={styles.forgotPassword}
+          >
+            <Text id="forgot-password">Forgotten Password</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 
