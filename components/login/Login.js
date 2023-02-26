@@ -10,6 +10,10 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { EvilIcons } from "@expo/vector-icons";
+
+// import { IonItem, IonLabel, IonSpinner } from "@ionic/react";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ipAddress } from "../../address";
 import * as LocalAuthentication from "expo-local-authentication";
@@ -19,6 +23,7 @@ import * as LocalAuthentication from "expo-local-authentication";
 const Login = ({ navigation }) => {
   const [details, setDetails] = useState({ email: "", password: "" });
   const [error, setError] = useState();
+  const [spinner, setSpinner] = useState(false);
 
   const handleChange = (key, value) => {
     setDetails({ ...details, [key]: value });
@@ -47,6 +52,7 @@ const Login = ({ navigation }) => {
   };
 
   const submitHandler = () => {
+    setSpinner(true);
     LoginUser(details);
     setTimeout(() => {
       setError("");
@@ -54,7 +60,7 @@ const Login = ({ navigation }) => {
   };
 
   const LoginUser = (details) => {
-    fetch("http://" + ipAddress + ":3000/api/authenticate", {
+    fetch(ipAddress + "/api/authenticate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -74,6 +80,7 @@ const Login = ({ navigation }) => {
           console.log("The details don't match");
           setError("The details don't match");
         }
+        setSpinner(false);
       })
       .catch((error) => console.error(error));
   };
@@ -152,7 +159,11 @@ const Login = ({ navigation }) => {
               submitHandler();
             }}
           >
-            <Text style={styles.submitButtonText}>Log In</Text>
+            {spinner === true ? (
+              <EvilIcons name="spinner-2" size={24} color="black" />
+            ) : (
+              <Text style={styles.submitButtonText}>Log In</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RadioButton } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, EvilIcons } from "@expo/vector-icons";
 import { ipAddress } from "../../address";
 
 function SignUp({ navigation }) {
@@ -25,6 +25,7 @@ function SignUp({ navigation }) {
   const [userPresent, setUserPresent] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [spinner, setSpinner] = useState(false);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -40,7 +41,7 @@ function SignUp({ navigation }) {
   const minDate = yearsAgo(100);
 
   const register = () => {
-    fetch("http://" + ipAddress + ":3000/api/signup", {
+    fetch(ipAddress + "/api/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,6 +65,7 @@ function SignUp({ navigation }) {
   };
 
   function checkUserAlreadyRegistered() {
+    setSpinner(true);
     if (
       regFirstName === "" ||
       regLastName === "" ||
@@ -73,10 +75,11 @@ function SignUp({ navigation }) {
       regConfirmPassword === ""
     ) {
       setError("Please fill all the required fields");
+      setSpinner(false);
     } else {
       setError("");
 
-      fetch("http://" + ipAddress + ":3000/api/emailalreadyregistered", {
+      fetch(ipAddress + "/api/emailalreadyregistered", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,6 +100,7 @@ function SignUp({ navigation }) {
             setError("");
             handleValidation();
           }
+          setSpinner(false);
         });
     }
   }
@@ -254,7 +258,11 @@ function SignUp({ navigation }) {
             }}
             // disabled={!allowSubmit}
           >
-            <Text style={styles.submitButtonText}>Submit</Text>
+            {spinner === true ? (
+              <EvilIcons name="spinner-2" size={24} color="black" />
+            ) : (
+              <Text style={styles.submitButtonText}>Submit</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {

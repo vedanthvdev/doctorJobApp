@@ -13,38 +13,41 @@ import { ipAddress } from "../../address";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainContainer from "../mainContainer";
 import SelectDropdown from "react-native-select-dropdown";
+import { EvilIcons } from "@expo/vector-icons";
 
 function RegisterJob({ navigation }) {
   const [jobTitle, setJobTitle] = useState("");
   const [jobCompany, setJobCompany] = useState("");
   const [jobLocation, setJobLocation] = useState("");
   const [jobLink, setJobLink] = useState("");
-  const [jobSalary, setJobSalary] = useState("");
+  const [jobSalary, setJobSalary] = useState();
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [jobType, setJobType] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const job = ["Full-time", "Part-time", "Locum"];
+  const [spinner, setSpinner] = useState(false);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
   async function register() {
+    setSpinner(true);
     const date = new Date();
     const formattedDate = date.toISOString().slice(0, 19).replace("T", " ");
     if (
       jobTitle === "" ||
       jobCompany === "" ||
       jobLocation === "" ||
-      jobSalary === "" ||
       jobType === ""
     ) {
       setError("Please fill all the required fields");
+      setSpinner(false);
     } else {
       setError("");
-      fetch("http://" + ipAddress + ":3000/api/registerjob", {
+      fetch(ipAddress + "/api/registerjob", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +73,7 @@ function RegisterJob({ navigation }) {
       setSuccess("Job Uploaded Successfully");
 
       console.log(jobLocation);
-
+      setSpinner(false);
       setTimeout(() => {
         setSuccess("");
         navigation.navigate("Home");
@@ -185,7 +188,11 @@ function RegisterJob({ navigation }) {
               register();
             }}
           >
-            <Text style={styles.submitButtonText}>Submit</Text>
+            {spinner === true ? (
+              <EvilIcons name="spinner-2" size={24} color="black" />
+            ) : (
+              <Text style={styles.submitButtonText}>Submit</Text>
+            )}
           </TouchableOpacity>
         </View>
 

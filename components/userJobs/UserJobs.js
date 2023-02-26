@@ -12,10 +12,12 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainContainer from "../mainContainer";
 import { ipAddress } from "../../address";
+import { EvilIcons } from "@expo/vector-icons";
 
 function UserJobs({ navigation }) {
   const [jobs, setJobs] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [spinner, setSpinner] = useState(true);
 
   const [contact, setContact] = useState(null);
 
@@ -26,7 +28,7 @@ function UserJobs({ navigation }) {
   const [deleteJobId, setDeleteJobId] = useState(null);
 
   const handleDelete = () => {
-    fetch("http://" + ipAddress + ":3000/api/deletejob", {
+    fetch(ipAddress + "/api/deletejob", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -120,24 +122,27 @@ function UserJobs({ navigation }) {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      await fetch("http://" + ipAddress + ":3000/api/getuseruploadedjobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: await AsyncStorage.getItem("userId"),
-        }),
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((responseData) => {
-          setJobs(responseData);
-        })
-        .catch((error) => {
-          console.log(error);
+      try {
+        const response = await fetch(ipAddress + "/api/getuseruploadedjobs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: await AsyncStorage.getItem("userId"),
+          }),
         });
+        if (response.ok) {
+          const responseData = await response.json();
+          if (responseData) {
+            setJobs(responseData);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setSpinner(false);
+      }
     };
     fetchData();
     setTriggerFetch(false);
@@ -145,75 +150,79 @@ function UserJobs({ navigation }) {
 
   return (
     <ImageBackground style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "row",
-          marginBottom: 50,
-          flexWrap: "wrap",
-        }}
-      >
-        {jobs.length > 0 ? (
-          jobs.map((job) => (
-            <View
-              style={styles.inputContainer}
-              className="jobs-available"
-              key={job.id}
-            >
-              <View className="job-card" style={styles.jobs} id={job.id}>
-                <Text style={styles.title}>{job.title}</Text>
-                <Text style={styles.details}>{job.company}</Text>
-                <Text style={styles.details}>{job.location}</Text>
-                <Text style={styles.details}>
-                  {job.job_type} {job.job_salary}
-                </Text>
-                {job.apply_link && (
+      {spinner === true ? (
+        <EvilIcons name="spinner-2" size={24} color="black" />
+      ) : (
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "row",
+            marginBottom: 50,
+            flexWrap: "wrap",
+          }}
+        >
+          {jobs.length > 0 ? (
+            jobs.map((job) => (
+              <View
+                style={styles.inputContainer}
+                className="jobs-available"
+                key={job.id}
+              >
+                <View className="job-card" style={styles.jobs} id={job.id}>
+                  <Text style={styles.title}>{job.title}</Text>
+                  <Text style={styles.details}>{job.company}</Text>
+                  <Text style={styles.details}>{job.location}</Text>
+                  <Text style={styles.details}>
+                    {job.job_type} {job.job_salary}
+                  </Text>
+                  {job.apply_link && (
+                    <TouchableOpacity
+                      accessibilityRole="link"
+                      className="apply-link"
+                      style={styles.details}
+                    >
+                      <Text id="forgot-password">Apply Now</Text>
+                    </TouchableOpacity>
+                  )}
+                  {(job.contact[0].phone || job.contact[0].email) && (
+                    <TouchableOpacity
+                      style={styles.contact}
+                      className="contact-button"
+                      onPress={() => openContactModal(job.contact[0])}
+                    >
+                      <Text id="forgot-password">Contact</Text>
+                    </TouchableOpacity>
+                  )}
                   <TouchableOpacity
-                    accessibilityRole="link"
-                    className="apply-link"
-                    style={styles.details}
+                    className="deleteJob"
+                    onPress={() => openDeleteConfirmationModal(job.id)}
                   >
-                    <Text id="forgot-password">Apply Now</Text>
+                    <Text style={styles.contact}>🗑️</Text>
                   </TouchableOpacity>
-                )}
-                {(job.contact[0].phone || job.contact[0].email) && (
-                  <TouchableOpacity
-                    style={styles.contact}
-                    className="contact-button"
-                    onPress={() => openContactModal(job.contact[0])}
-                  >
-                    <Text id="forgot-password">Contact</Text>
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  className="deleteJob"
-                  onPress={() => openDeleteConfirmationModal(job.id)}
-                >
-                  <Text style={styles.contact}>🗑️</Text>
-                </TouchableOpacity>
+                </View>
               </View>
+            ))
+          ) : (
+            <View>
+              <Text id="forgot-password">No jobs found</Text>
             </View>
-          ))
-        ) : (
-          <View>
-            <Text id="forgot-password">No jobs found</Text>
-          </View>
-        )}
-        {contact && (
-          <View>
-            <ContactModal contact={contact} />
-          </View>
-        )}
-        {deleteJobId && (
-          <View>
-            <DeleteConfirmationModal
-              deleteJobId={deleteJobId}
-              closeDeleteConfirmationModal={closeDeleteConfirmationModal}
-            />
-          </View>
-        )}
-      </ScrollView>
+          )}
+          {contact && (
+            <View>
+              <ContactModal contact={contact} />
+            </View>
+          )}
+          {deleteJobId && (
+            <View>
+              <DeleteConfirmationModal
+                deleteJobId={deleteJobId}
+                closeDeleteConfirmationModal={closeDeleteConfirmationModal}
+              />
+            </View>
+          )}
+        </ScrollView>
+      )}
       <MainContainer navigation={navigation} />
     </ImageBackground>
   );
