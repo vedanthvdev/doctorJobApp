@@ -15,7 +15,7 @@ function Setting({ navigation }) {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      await fetch("http://" + ipAddress + ":3000/api/getuser", {
+      await fetch(ipAddress + "/api/getuser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

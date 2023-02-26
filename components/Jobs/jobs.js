@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { EvilIcons } from "@expo/vector-icons";
 import SelectDropdown from "react-native-select-dropdown";
 import MainContainer from "../mainContainer";
 import { ipAddress } from "../../address";
@@ -25,6 +25,7 @@ function Jobs({ navigation }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const job = ["All", "Full-time", "Part-time", "Locum"];
+  const [spinner, setSpinner] = useState(true);
 
   const [contact, setContact] = useState(null);
 
@@ -68,7 +69,7 @@ function Jobs({ navigation }) {
   };
 
   function fetchData() {
-    fetch("http://" + ipAddress + ":3000/api/getjobs", {
+    fetch(ipAddress + "/api/getjobs", {
       method: "GET",
     })
       .then((response) => {
@@ -77,6 +78,7 @@ function Jobs({ navigation }) {
       .then((responseData) => {
         setJobs(responseData);
         setFilteredJobs(responseData);
+        setSpinner(false);
       })
       .catch((error) => {
         console.log(error);
@@ -153,63 +155,67 @@ function Jobs({ navigation }) {
             <Text style={styles.submitButtonText}>Filter</Text>
           </TouchableOpacity>
         </View>
-
-        <ScrollView
-          contentContainerStyle={{
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "row",
-            flexWrap: "wrap",
-          }}
-        >
-          {filteredJobs.length > 0 ? (
-            filteredJobs.map((job) => (
-              <View
-                style={styles.inputContainer}
-                className="jobs-available"
-                key={job.id}
-              >
-                <View className="job-card" style={styles.jobs} id={job.id}>
-                  <Text style={styles.title}>{job.title}</Text>
-                  <Text style={styles.details}>{job.company}</Text>
-                  <Text style={styles.details}>{job.location}</Text>
-                  <Text style={styles.details}>
-                    {job.job_type} {job.job_salary}
-                  </Text>
-                  {job.apply_link && (
-                    <TouchableOpacity
-                      accessibilityRole="link"
-                      className="apply-link"
-                      style={styles.details}
-                    >
-                      <Text id="forgot-password">Apply Now</Text>
-                    </TouchableOpacity>
-                  )}
-                  {(job.contact[0].phone || job.contact[0].email) && (
-                    <TouchableOpacity
-                      style={styles.contact}
-                      className="contact-button"
-                      onPress={() => openContactModal(job.contact[0])}
-                    >
-                      <Text id="forgot-password">Contact</Text>
-                    </TouchableOpacity>
-                  )}
+        {spinner === true ? (
+          <EvilIcons name="spinner-2" size={24} color="black" />
+        ) : (
+          <ScrollView
+            contentContainerStyle={{
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+            }}
+          >
+            {filteredJobs.length > 0 ? (
+              filteredJobs.map((job) => (
+                <View
+                  style={styles.inputContainer}
+                  className="jobs-available"
+                  key={job.id}
+                >
+                  <View className="job-card" style={styles.jobs} id={job.id}>
+                    <Text style={styles.title}>{job.title}</Text>
+                    <Text style={styles.details}>{job.company}</Text>
+                    <Text style={styles.details}>{job.location}</Text>
+                    <Text style={styles.details}>
+                      {job.job_type} {job.job_salary}
+                    </Text>
+                    {job.apply_link && (
+                      <TouchableOpacity
+                        accessibilityRole="link"
+                        className="apply-link"
+                        style={styles.details}
+                      >
+                        <Text id="apply-url">Apply Now</Text>
+                      </TouchableOpacity>
+                    )}
+                    {(job.contact[0].phone || job.contact[0].email) && (
+                      <TouchableOpacity
+                        style={styles.contact}
+                        className="contact-button"
+                        onPress={() => openContactModal(job.contact[0])}
+                      >
+                        <Text id="contact-button">Contact</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              ))
+            ) : (
+              <View>
+                <Text id="no-jobs">No jobs found</Text>
+              </View>
+            )}
+            {contact && (
+              <View>
+                <View>
+                  <ContactModal contact={contact} />
                 </View>
               </View>
-            ))
-          ) : (
-            <View>
-              <Text id="forgot-password">No jobs found</Text>
-            </View>
-          )}
-          {contact && (
-            <View>
-              <View>
-                <ContactModal contact={contact} />
-              </View>
-            </View>
-          )}
-        </ScrollView>
+            )}
+          </ScrollView>
+        )}
+
         <MainContainer navigation={navigation} />
       </ImageBackground>
     </TouchableWithoutFeedback>
