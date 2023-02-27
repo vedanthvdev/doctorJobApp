@@ -88,6 +88,7 @@ const Login = ({ navigation }) => {
   async function loginSuccess(response) {
     console.log("Successfully Logged in! Welcome to your future");
     await AsyncStorage.setItem("isLoggedIn", "true");
+    console.log(response);
     await AsyncStorage.setItem("userId", response[0].u_id.toString());
 
     setError("");

@@ -59,14 +59,22 @@ export default function Home({ navigation }) {
       method: "GET",
     })
       .then((response) => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Network response was not ok");
+        }
       })
       .then((responseData) => {
-        setJobs(responseData);
-        setSpinner(false);
+        if (responseData) {
+          setJobs(responseData);
+        }
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setSpinner(false);
       });
   }
 

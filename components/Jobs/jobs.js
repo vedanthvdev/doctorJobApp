@@ -73,15 +73,21 @@ function Jobs({ navigation }) {
       method: "GET",
     })
       .then((response) => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Network response was not ok");
+        }
       })
       .then((responseData) => {
         setJobs(responseData);
         setFilteredJobs(responseData);
-        setSpinner(false);
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setSpinner(false);
       });
   }
 
