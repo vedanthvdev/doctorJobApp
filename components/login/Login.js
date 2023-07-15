@@ -74,6 +74,7 @@ const Login = ({ navigation }) => {
         return response.json();
       })
       .then((responseData) => {
+        console.log(responseData.message);
         if (!responseData.message) {
           loginSuccess(responseData);
         } else {
