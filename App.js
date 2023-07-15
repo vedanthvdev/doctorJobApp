@@ -1,10 +1,10 @@
 import "expo-dev-menu";
 import React, { useState } from "react";
-import Login from "./components/login/Login";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import SignUp from "./components/signup/SignUp";
+import Login from "./components/login/Login";
 import Home from "./components/Home/Home";
 import ForgotPassword from "./components/forgotpassword/ForgotPassword";
 import Jobs from "./components/Jobs/jobs";

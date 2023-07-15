@@ -3,6 +3,11 @@
     "version": ">= 3.6.1"
   },
   "build": {
+    "preview2": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal",
@@ -13,6 +18,7 @@
     "preview": {
       "distribution": "internal",
       "ios": {
+        "simulator": true,
         "resourceClass": "m1-medium"
       }
     },

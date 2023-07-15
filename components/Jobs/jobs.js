@@ -109,6 +109,11 @@ function Jobs({ navigation }) {
     setFilteredJobs(filteredJobs);
   }
 
+  const validateCont = (conct) => {
+    const finl = JSON.parse(conct);
+    return finl[0];
+  };
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <ImageBackground style={styles.container}>
@@ -171,16 +176,16 @@ function Jobs({ navigation }) {
                 <View
                   style={styles.inputContainer}
                   className="jobs-available"
-                  key={job.id}
+                  key={job.j_id}
                 >
-                  <View className="job-card" style={styles.jobs} id={job.id}>
-                    <Text style={styles.title}>{job.title}</Text>
-                    <Text style={styles.details}>{job.company}</Text>
-                    <Text style={styles.details}>{job.location}</Text>
+                  <View className="job-card" style={styles.jobs} id={job.j_id}>
+                    <Text style={styles.title}>{job.j_title}</Text>
+                    <Text style={styles.details}>{job.j_company}</Text>
+                    <Text style={styles.details}>{job.j_location}</Text>
                     <Text style={styles.details}>
-                      {job.job_type} {job.job_salary}
+                      {job.j_type} {job.j_salary}
                     </Text>
-                    {job.apply_link && (
+                    {job.j_link && (
                       <TouchableOpacity
                         accessibilityRole="link"
                         className="apply-link"
@@ -189,11 +194,14 @@ function Jobs({ navigation }) {
                         <Text id="apply-url">Apply Now</Text>
                       </TouchableOpacity>
                     )}
-                    {(job.contact[0].phone || job.contact[0].email) && (
+                    {(validateCont(job.j_contact).phone ||
+                      validateCont(job.j_contact).email) && (
                       <TouchableOpacity
                         style={styles.contact}
                         className="contact-button"
-                        onPress={() => openContactModal(job.contact[0])}
+                        onPress={() =>
+                          openContactModal(validateCont(job.j_contact))
+                        }
                       >
                         <Text id="contact-button">Contact</Text>
                       </TouchableOpacity>

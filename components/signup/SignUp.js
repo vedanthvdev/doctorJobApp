@@ -92,7 +92,7 @@ function SignUp({ navigation }) {
           return response.json();
         })
         .then((responseData) => {
-          if (!responseData.message) {
+          if (responseData.message) {
             setUserPresent(true);
             setError("Email already exists...");
           } else {
