@@ -93,11 +93,11 @@ function Jobs({ navigation }) {
     // filter the jobs
     const filteredJobs = jobs.filter((job) => {
       if (
-        (job.title.toLowerCase().includes(filterTitle) ||
+        (job.j_title.toLowerCase().includes(filterTitle) ||
           filterTitle.length === 0) &&
-        (job.location.toLowerCase().includes(filterLocation) ||
+        (job.j_location.toLowerCase().includes(filterLocation) ||
           filterLocation.length === 0) &&
-        (job.job_type === filterJobType ||
+        (job.j_type === filterJobType ||
           filterJobType.length === 0 ||
           filterJobType === "All")
       ) {

@@ -66,7 +66,7 @@ const Login = ({ navigation }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: details.email,
+        email: details.email.toLowerCase(),
         password: details.password,
       }),
     })
